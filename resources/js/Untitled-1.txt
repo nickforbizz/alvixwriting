@@ -1,0 +1,188 @@
+ // data: {
+    //     message: '',
+    //     typing: '', 
+    //     user: { username: 'Me' },
+    //     numberOfUsers: 0,
+    //     chat: {
+    //         message: [],
+    //         user: [],
+    //         color: [],
+    //         time: []
+    //     }
+    // },
+    // methods: {
+    //     send() {
+    //         if (this.message.length != 0) {
+
+    //             this.chat.message.push(this.message);
+    //             this.chat.user.push(this.user);
+    //             this.chat.color.push('info');
+    //             this.chat.time.push(this.getTime());
+    //             axios.post('/web/ChatSend', {
+    //                     message: this.message
+    //                 })
+    //                 .then(response => {
+    //                     this.message = '';
+
+    //                     console.log(response);
+    //                 })
+    //                 .catch(error => {
+    //                     console.log(error);
+    //                 });
+
+    //         }
+    //     },
+
+    //     getTime() {
+    //         let time = new Date();
+    //         let hourz = time.getHours();
+    //         let hours = (hourz + 24 - 2) % 24;
+    //         let mid = 'am';
+    //         if (hours == 0) { //At 00 hours we need to show 12 am
+    //             hours = 12;
+    //         } else if (hours > 12) {
+    //             hours = hours % 12;
+    //             mid = 'pm';
+    //         }
+    //         return time.getHours() + " : " + time.getMinutes() + mid;
+    //     }
+
+    // },
+
+    // watch: {
+    //     message() {
+    //         Echo.private('chat')
+    //             .whisper('typing', {
+    //                 name: this.message
+    //             });
+    //     }
+    // },
+
+    // mounted() {
+    //     Echo.private(`updates-subscription`)
+    //         .listen('SubscribeEvent', (e) => {
+    //             console.log(e.update);
+    //         });
+    //     Echo.private('chat')
+    //         .listen('UserEvent', (e) => {
+    //             this.chat.message.push(e.message);
+    //             this.chat.user.push(e.user);
+    //             this.chat.color.push('success');
+    //             this.chat.time.push(this.getTime());
+
+    //             // console.log(e.user);
+    //         })
+    //         .listenForWhisper('typing', (e) => {
+    //             if (e.name != '') {
+
+    //                 this.typing = 'typing ... ';
+
+    //             } else {
+
+    //                 this.typing = '';
+
+    //             }
+    //         });
+    //     Echo.join('chat')
+    //         .here((users) => {
+    //             this.numberOfUsers = users.length;
+
+    //         })
+    //         .joining((user) => {
+    //             this.numberOfUsers += 1;
+    //             this.$toaster.success(' joined the Chat.');
+
+    //             console.log(user);
+    //         })
+    //         .leaving((user) => {
+    //             this.numberOfUsers -= 1;
+    //             this.$toaster.success(' Leaved the Chat.');
+
+
+    //             console.log(user.name);
+    //         });
+    // }
+
+
+           function downloadable($id) {
+            {{--x_data('{{route('Admin.download',['file'=>$assgReview->id]) }}');--}}
+            $.ajax({
+                url: '{{route('Admin.downloadable',['file'=>$assgReview->id]) }}',
+                method: 'get',
+                success: function (data) {
+                    // data = JSON.parse(data);
+                    console.log(data);
+
+
+                    $("#edit").html('');
+
+                    if (data.code == 1) {
+
+
+                        let files = $.map(data.data, function(value, index) {
+                            return [value];
+                        });
+                        let filesName = $.map(files, function(value, index) {
+                            return [value];
+                        });
+
+
+
+                        $("#edit").html(`
+                                @component('utils.editModal',["code"=>"DownloadFiles"])
+
+                                @endcomponent
+                            `);
+
+                        files.forEach(element => {
+                            $("#files").append(`
+                                    @component('utils.errorsModalArray', ["code"=>"DownloadFiles"])
+
+                                    @endcomponent
+                                `);
+                        });
+
+
+                    } else if(data.code == -1){
+                        var errs = $.map(data.errs, function(value, index) {
+                            return [value];
+                        });
+                        console.log("some");
+
+                        $("#edit").html(`
+                                @component('utils.errorsModal',["code"=>"-1"])
+
+                                @endcomponent
+                            `);
+                        errs.forEach(element => {
+
+                            $("#errors").append(`
+                                    @component('utils.errorsModalArray', ["code"=>"errorsArray"])
+
+                                    @endcomponent
+                                `);
+                        });
+                    }else {
+                        $("#edit").html(`<div class="text-center"> <h3>Error Updating...</h3> <p>Bye</p></div>`);
+                        $("#submit_btn").hide();
+                    }
+                    $("#myModal").modal();
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Fatal Error Occurred");
+                }
+
+            });
+           
+
+        }
+        function download(id) {
+
+            let file_url = '{{ route('Admin.pagedownload',':id') }}';
+            file_url = file_url.replace(':id', id);
+            window.location = file_url;
+
+        }
+
+

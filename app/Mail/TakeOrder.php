@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+class TakeOrder extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $writer;
+    public $order;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct($order, $writer)
+    {
+        $this->order = $order;
+        $this->writer = $writer;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->markdown('emails.take_order');
+    }
+}
